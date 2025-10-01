@@ -12,13 +12,10 @@
             background-color: #f8f9fa;
         }
 
-        video {
+        #qr-reader {
             width: 100%;
             max-width: 600px;
-            border: 2px solid #6c757d;
-            border-radius: 10px;
             margin: 20px auto;
-            display: block;
         }
 
         ul#scannedList li {
@@ -47,28 +44,28 @@
 </head>
 <body>
 
-    <div class="container text-center mt-4">
-        <h1 class="mb-2">🎯 QR Attendance System</h1>
-        <p class="lead">Mark your attendance here!</p>
+<div class="container text-center mt-4">
+    <h1 class="mb-2">🎯 QR Attendance System</h1>
+    <p class="lead">Mark your attendance here!</p>
 
-        <video id="preview" class="shadow-sm"></video>
+    <div id="qr-reader" class="shadow-sm"></div>
 
-        <div class="mt-3">
-            <button id="startBtn" class="btn btn-success">Start Scanning</button>
-            <button id="stopBtn" class="btn btn-danger">Stop Scanning</button>
-            <button id="downloadBtn" class="btn btn-primary">Download Attendance Report</button>
-        </div>
-
-        <div id="countDisplay" class="countDisplay mt-4">Marked: 0/120 (0.00%)</div>
-
-        <h3 class="mt-4">Scanned Students:</h3>
-        <ul id="scannedList" class="list-unstyled mx-auto" style="max-width: 500px;"></ul>
+    <div class="mt-3">
+        <button id="startBtn" class="btn btn-success">Start Scanning</button>
+        <button id="stopBtn" class="btn btn-danger">Stop Scanning</button>
+        <button id="downloadBtn" class="btn btn-primary">Download Attendance Report</button>
     </div>
 
-    <!-- JS Libraries -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/instascan/1.0.0/instascan.min.js"></script>
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <div id="countDisplay" class="countDisplay mt-4">Marked: 0/120 (0.00%)</div>
+
+    <h3 class="mt-4">Scanned Students:</h3>
+    <ul id="scannedList" class="list-unstyled mx-auto" style="max-width: 500px;"></ul>
+</div>
+
+<!-- JS Libraries -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
+<script src="{{ url_for('static', filename='script.js') }}"></script>
 
 </body>
 </html>
