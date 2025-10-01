@@ -1,4 +1,4 @@
-let scanner = new Instascan.Scanner({ video: document.getElementById('preview') });
+// HTML5 QR Code Scanner Setup
 let scannedMap = new Map();
 let totalStudents = 120;  // Total number of students
 let presentCount = 0;     // Count of present students
@@ -22,11 +22,13 @@ function updateScannedList() {
     document.getElementById('countDisplay').textContent = `Marked: ${presentCount}/${totalStudents} (${percentage.toFixed(2)}%)`;
 }
 
-// Handle scan event and process data
-scanner.addListener('scan', function (content) {
-    let qrData = content.split(",");
-    let rollNo = qrData.find(item => item.startsWith("roll:")).split(":")[1];
-    let name = qrData.find(item => item.startsWith("name:")).split(":")[1];
+// Function to handle QR code scan result
+function onScanSuccess(decodedText, decodedResult) {
+    console.log(`Scanned QR: ${decodedText}`);
+
+    let qrData = decodedText.split(",");
+    let rollNo = qrData.find(item => item.toLowerCase().startsWith("roll:")).split(":")[1].trim();
+    let name = qrData.find(item => item.toLowerCase().startsWith("name:")).split(":")[1].trim();
 
     if (!scannedMap.has(rollNo)) {
         scannedMap.set(rollNo, name);
@@ -35,25 +37,47 @@ scanner.addListener('scan', function (content) {
     } else {
         console.log(`Duplicate: ${rollNo} - ${name}`);
     }
-});
+}
+
+// Initialize the scanner
+let html5QrcodeScanner = new Html5Qrcode("preview");
+let scanning = false;
 
 // Start scanning
 document.getElementById('startBtn').addEventListener('click', function () {
-    Instascan.Camera.getCameras().then(function (cameras) {
-        if (cameras.length > 0) {
-            scanner.start(cameras[0]);
+    if (scanning) return;
+    Html5Qrcode.getCameras().then(cameras => {
+        if (cameras && cameras.length) {
+            scanning = true;
+            html5QrcodeScanner.start(
+                cameras[0].id,
+                {
+                    fps: 10,    // frames per second
+                    qrbox: 250  // scanning box size
+                },
+                onScanSuccess
+            ).catch(err => {
+                console.error(err);
+                alert("Error starting camera: " + err);
+            });
         } else {
-            alert('No cameras found!');
+            alert("No cameras found!");
         }
-    }).catch(function (e) {
-        console.error(e);
-        alert('Error accessing camera: ' + e);
+    }).catch(err => {
+        console.error(err);
+        alert("Error getting cameras: " + err);
     });
 });
 
 // Stop scanning
 document.getElementById('stopBtn').addEventListener('click', function () {
-    scanner.stop();
+    if (!scanning) return;
+    html5QrcodeScanner.stop().then(() => {
+        scanning = false;
+        console.log("Scanning stopped.");
+    }).catch(err => {
+        console.error("Stop failed: ", err);
+    });
 });
 
 // Download attendance report as Excel
